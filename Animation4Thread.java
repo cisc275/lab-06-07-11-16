@@ -30,6 +30,8 @@ public class Animation4Thread extends JFrame {
     DrawPanel drawPanel = new DrawPanel();
     Action drawAction;
 
+
+    //should incorporate ActionEvents and actionPerformed in Controller, paints in View.
     public Animation4Thread() {
     	drawAction = new AbstractAction(){
     		public void actionPerformed(ActionEvent e){
