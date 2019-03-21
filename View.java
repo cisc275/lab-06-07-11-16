@@ -18,10 +18,18 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JButton;
+
 
 
 @SuppressWarnings("serial")
 class View extends JPanel{
+
+    JButton b1;
+    boolean buttonOn = false;
+    public void clickButton(){
+	buttonOn = !buttonOn;
+    }
 
     JFrame frame;
     Dimension windowSize;
@@ -61,6 +69,28 @@ class View extends JPanel{
 	this.createFrame();
 	this.createImages();
     }
+
+    void addControllerToButton(Controller c){
+	b1.addActionListener(c);
+    }
+    
+    private void createFrame(){
+       
+    	frame = new JFrame();
+    	frame.getContentPane().add(this);
+    	frame.setBackground(Color.gray);
+    	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(frameWidth, frameHeight);
+        frame.setVisible(true);
+	
+    	windowSize  = new Dimension(frameWidth, frameHeight);   	
+    	frame.setSize(windowSize);
+    	frame.setMinimumSize(windowSize);
+    	frame.setMaximumSize(windowSize);
+	
+	b1 = new JButton("push me");
+	frame.add(b1);
+    }
     
     //View.update(model.getX(), model.getY(), model.getDirect()); basically 
     public void update(int x, int y, Direction direction){
@@ -77,23 +107,7 @@ class View extends JPanel{
     		e.printStackTrace();
     		}
     	}
-    
-    private void createFrame(){
-       
-    	frame = new JFrame();
-    	frame.getContentPane().add(this);
-    	frame.setBackground(Color.gray);
-    	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(frameWidth, frameHeight);
-        frame.setVisible(true);
-	
-    	windowSize  = new Dimension(frameWidth, frameHeight);   	
-    	frame.setSize(windowSize);
-    	frame.setMinimumSize(windowSize);
-    	frame.setMaximumSize(windowSize);
 
-    }
-    
      private BufferedImage createImage(String d){
     	BufferedImage bufferedImage;
     	try {
@@ -105,6 +119,7 @@ class View extends JPanel{
 	return null;
        
     }
+    
     private void createImages(){
 		
 	BufferedImage img = createImage("west"); //for west direction
