@@ -25,10 +25,16 @@ import javax.swing.JButton;
 @SuppressWarnings("serial")
 class View extends JPanel{
 
-    JButton b1;
+
+    JButton b1 = new JButton("PUSH ME"); 
     boolean buttonOn = false;
     public void clickButton(){
 	buttonOn = !buttonOn;
+	if(buttonOn){
+	    System.out.println("turned on");
+	}else{
+	    System.out.println("turned off");
+	}
     }
 
     JFrame frame;
@@ -74,6 +80,7 @@ class View extends JPanel{
 	b1.addActionListener(c);
     }
     
+    
     private void createFrame(){
        
     	frame = new JFrame();
@@ -81,15 +88,19 @@ class View extends JPanel{
     	frame.setBackground(Color.gray);
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(frameWidth, frameHeight);
-        frame.setVisible(true);
+
+
+	JPanel panel = new JPanel();
+	panel.setBackground(Color.gray);
+	panel.add(b1);   //so button does not take up entire frame
+	frame.add(panel);
+        frame.setVisible(true); //NOTE: must put all in frame before setVisible
 	
     	windowSize  = new Dimension(frameWidth, frameHeight);   	
     	frame.setSize(windowSize);
     	frame.setMinimumSize(windowSize);
     	frame.setMaximumSize(windowSize);
 	
-	b1 = new JButton("push me");
-	frame.add(b1);
     }
     
     //View.update(model.getX(), model.getY(), model.getDirect()); basically 
@@ -98,6 +109,7 @@ class View extends JPanel{
     	xloc = x;
     	yloc = y;
     	d = direction;
+
 	
     	frame.repaint();
     	try {
@@ -169,28 +181,28 @@ class View extends JPanel{
 	picNum = (picNum + 1) % frameCount;
 
 	if (d == Direction.EAST) { //draw east
-    	g.drawImage(picsEast[picNum], xloc, yloc, Color.gray, this);
+    	g.drawImage(picsEast[picNum], xloc, yloc, this);
 	}
 	else if (d == Direction.WEST) { //draw west
-    	g.drawImage(picsWest[picNum], xloc, yloc, Color.gray, this);
+    	g.drawImage(picsWest[picNum], xloc, yloc,  this);
 	}
 	else if (d == Direction.NORTH) { // draw north
-    	g.drawImage(picsNorth[picNum], xloc, yloc, Color.gray, this);
+    	g.drawImage(picsNorth[picNum], xloc, yloc, this);
 	}
 	else if (d == Direction.SOUTH) { // draw south
-    	g.drawImage(picsSouth[picNum], xloc, yloc, Color.gray, this);
+    	g.drawImage(picsSouth[picNum], xloc, yloc, this);
 	}
 	else if (d == Direction.SOUTHEAST) { // draw south-east
-    	g.drawImage(picsSEast[picNum], xloc, yloc, Color.gray, this);
+    	g.drawImage(picsSEast[picNum], xloc, yloc, this);
 	}
 	else if (d == Direction.SOUTHWEST) { // draw south-west
-    	g.drawImage(picsSWest[picNum], xloc, yloc, Color.gray, this);
+    	g.drawImage(picsSWest[picNum], xloc, yloc, this);
 	}
 	else if (d == Direction.NORTHEAST) { // draw north-east
-    	g.drawImage(picsNEast[picNum], xloc, yloc, Color.gray, this);
+    	g.drawImage(picsNEast[picNum], xloc, yloc, this);
 	}
 	else if (d == Direction.NORTHWEST) { // draw north-west
-    	g.drawImage(picsNWest[picNum], xloc, yloc, Color.gray, this);
+    	g.drawImage(picsNWest[picNum], xloc, yloc, this);
 	}
     }
    

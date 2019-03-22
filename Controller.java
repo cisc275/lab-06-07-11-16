@@ -17,8 +17,8 @@ public class Controller implements ActionListener{
     }  
     public void actionPerformed(ActionEvent e){
 	//code that reacts to action
-	view.clickButton();
-       	System.out.println("I was pressed!!");
+        view.clickButton();
+
     }
 
         //run the simulation
