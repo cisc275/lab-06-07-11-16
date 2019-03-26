@@ -15,6 +15,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -38,13 +40,16 @@ class View extends JPanel{
 	
 	private int xloc = 0;
 	private int yloc = 0;
-	private Direction d;
+	private Direction d = Direction.SOUTHEAST;
 	private boolean moving;
 	
-	final int frameCount = 10;
+	String state = "running"; //initial the state of the orc
+	
+	int frameCount = 10;
 	int picNum = 0;
 	
-	BufferedImage[][] pics;
+
+	HashMap<String, BufferedImage[][]> pics;
 	
 	//(view.getWidth(), view.getHeight()), view.getImageWidth(), view.getImageHeight());
 	public int getWidth(){return frameWidth;}
@@ -61,6 +66,9 @@ class View extends JPanel{
 	void addControllerToButton(Controller c){
 		b1.addActionListener(c);
 	}
+	void addControllerToKeyboard(Controller c) {
+		addKeyListener(c);
+	}
 	
 	private void createFrame(){
 		frame = new JFrame();
@@ -75,21 +83,25 @@ class View extends JPanel{
 		frame.add(panel);
 		frame.setVisible(true); //NOTE: must put all in frame before setVisible
 		
+		
 		windowSize  = new Dimension(frameWidth, frameHeight);   	
 		frame.setSize(windowSize);
 		frame.setMinimumSize(windowSize);
 		frame.setMaximumSize(windowSize);
+		this.setFocusable(true);
 	}
 	
 	//View.update(model.getX(), model.getY(), model.getDirect()); basically 
-	public void update(int x, int y, Direction direction, boolean mov) {
+	public void update(int x, int y, Direction direction, boolean mov, String state) {
 		frame.setSize(windowSize);
 		xloc = x;
 		yloc = y;
 		d = direction;
 		moving = mov;
+		this.state = state;
 		
 		frame.repaint();
+		
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
@@ -110,22 +122,57 @@ class View extends JPanel{
 	}
 	
 	private void createImages() {
-		pics = new BufferedImage[8][10];
+		//create pics hash map
+		pics = new HashMap<String, BufferedImage[][]>();
+		
+		//add value to the pics hash map for the running state
+		BufferedImage[][] forward = new BufferedImage[8][10];
+		pics.put("running", forward);
 		for (int h = 0; h < 8; h++) {
 			Direction dirk = Direction.atIndex(h);
-			//System.out.println("orc/orc_forward_"+dirk.getName()+".png");
-			BufferedImage img = createImage("images/orc/orc_forward_"+dirk.getName()+".png");
+			BufferedImage imgForward = createImage("images/orc/orc_forward_"+dirk.getName()+".png");
+			for(int i = 0; i <  frameCount; i++)
+				forward[h][i] = imgForward.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
+		}
+		
+		//add value to the pics hash map for the firing state
+		BufferedImage[][] fire = new BufferedImage[8][4];
+		pics.put("firing", fire);
+		for (int h = 0; h < 8; h++) {
+			Direction dirk = Direction.atIndex(h);
+			BufferedImage imgFire = createImage("images/orc/orc_fire_"+dirk.getName()+".png");
+			frameCount = 4;
 			for(int i = 0; i < frameCount; i++)
-				pics[h][i] = img.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
+				fire[h][i] = imgFire.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
+		}
+		
+		//add value to the pics hash map for the jumping state
+		BufferedImage[][] jump = new BufferedImage[8][8];
+		pics.put("jumping", jump);
+		for (int h = 0; h < 8; h++) {
+			Direction dirk = Direction.atIndex(h);
+			BufferedImage imgJump = createImage("images/orc/orc_jump_"+dirk.getName()+".png");
+			frameCount = 8;
+			for(int i = 0; i < frameCount; i++)
+				jump[h][i] = imgJump.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
 		}
 	}
 	
 	public void paint(Graphics g) {
 		if (moving) {
+			if(state == "running") { //change the frame count for running, due to the frame cound differences between state
+				frameCount = 10;
+			}
+			if(state == "firing") {
+				frameCount = 4;
+			}
+			if(state == "jumping") {
+				frameCount = 8;
+			}
 			picNum = (picNum + 1) % frameCount;
 		}
 		try {
-			g.drawImage(pics[d.getIndex()][picNum], xloc, yloc, this);
+			g.drawImage(pics.get(state)[d.getIndex()][picNum], xloc, yloc, this); //draw image
 		} catch (NullPointerException e) {
 			
 		}
