@@ -43,7 +43,7 @@ class View extends JPanel{
 	private Direction d = Direction.SOUTHEAST;
 	private boolean moving;
 	
-	String state = "running"; //initial the state of the orc
+	String state = "forward"; //initial the state of the orc
 	
 	int frameCount = 10;
 	int picNum = 0;
@@ -125,56 +125,65 @@ class View extends JPanel{
 		//create pics hash map
 		pics = new HashMap<String, BufferedImage[][]>();
 		
+		String[] keyWord = new String[] {"forward","fire","jump"};
+		
+		for(String S:keyWord) {
 		//add value to the pics hash map for the running state
-		BufferedImage[][] forward = new BufferedImage[8][10];
-		pics.put("running", forward);
+		BufferedImage[][] img = new BufferedImage[8][10];
+		pics.put(S, img);
 		for (int h = 0; h < 8; h++) {
 			Direction dirk = Direction.atIndex(h);
-			BufferedImage imgForward = createImage("images/orc/orc_forward_"+dirk.getName()+".png");
+			BufferedImage imgS = createImage("images/orc/orc_"+S+"_"+dirk.getName()+".png");
+			if(S == "forward") {
+				frameCount = 10;
+			}
+			else if(S == "fire") {
+				frameCount = 4 ;
+			}
+			else {
+				frameCount = 8;
+			}
 			for(int i = 0; i <  frameCount; i++)
-				forward[h][i] = imgForward.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
+				img[h][i] = imgS.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
 		}
-		
-		//add value to the pics hash map for the firing state
-		BufferedImage[][] fire = new BufferedImage[8][4];
-		pics.put("firing", fire);
-		for (int h = 0; h < 8; h++) {
-			Direction dirk = Direction.atIndex(h);
-			BufferedImage imgFire = createImage("images/orc/orc_fire_"+dirk.getName()+".png");
-			frameCount = 4;
-			for(int i = 0; i < frameCount; i++)
-				fire[h][i] = imgFire.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
 		}
-		
-		//add value to the pics hash map for the jumping state
-		BufferedImage[][] jump = new BufferedImage[8][8];
-		pics.put("jumping", jump);
-		for (int h = 0; h < 8; h++) {
-			Direction dirk = Direction.atIndex(h);
-			BufferedImage imgJump = createImage("images/orc/orc_jump_"+dirk.getName()+".png");
-			frameCount = 8;
-			for(int i = 0; i < frameCount; i++)
-				jump[h][i] = imgJump.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
-		}
+//		//add value to the pics hash map for the firing state
+//		BufferedImage[][] fire = new BufferedImage[8][4];
+//		pics.put("firing", fire);
+//		for (int h = 0; h < 8; h++) {
+//			Direction dirk = Direction.atIndex(h);
+//			BufferedImage imgFire = createImage("images/orc/orc_fire_"+dirk.getName()+".png");
+//			frameCount = 4;
+//			for(int i = 0; i < frameCount; i++)
+//				fire[h][i] = imgFire.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
+//		}
+//		
+//		//add value to the pics hash map for the jumping state
+//		BufferedImage[][] jump = new BufferedImage[8][8];
+//		pics.put("jumping", jump);
+//		for (int h = 0; h < 8; h++) {
+//			Direction dirk = Direction.atIndex(h);
+//			BufferedImage imgJump = createImage("images/orc/orc_jump_"+dirk.getName()+".png");
+//			frameCount = 8;
+//			for(int i = 0; i < frameCount; i++)
+//				jump[h][i] = imgJump.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
+//		}
 	}
 	
 	public void paint(Graphics g) {
 		if (moving) {
-			if(state == "running") { //change the frame count for running, due to the frame cound differences between state
+			if(state == "forward") { //change the frame count for running, due to the frame cound differences between state
 				frameCount = 10;
 			}
-			if(state == "firing") {
+			if(state == "fire") {
 				frameCount = 4;
 			}
-			if(state == "jumping") {
+			if(state == "jump") {
 				frameCount = 8;
 			}
 			picNum = (picNum + 1) % frameCount;
 		}
-		try {
-			g.drawImage(pics.get(state)[d.getIndex()][picNum], xloc, yloc, this); //draw image
-		} catch (NullPointerException e) {
-			
-		}
+		g.drawImage(pics.get(state)[d.getIndex()][picNum], xloc, yloc, this); //draw image
+		
 	}
 }
