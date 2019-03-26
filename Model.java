@@ -109,11 +109,11 @@ class Model{
 	//return the state of the orc
 	public String getState() {
 		if (this.jumping)
-			return "jumping";
+			return "jump";
 		else if (this.firing)
-			return "firing";
+			return "fire";
 		else
-			return "running";
+			return "forward";
 	}
 	
     public void startStop() {
