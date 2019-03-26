@@ -1,3 +1,5 @@
+import java.awt.event.KeyEvent;
+
 /**
  * Model: Contains all the state and logic
  * Does not contain anything about images or graphics, must ask view for that
@@ -26,8 +28,13 @@ class Model{
 	final int yIncr = 6;
 	int xChange = xIncr;
 	int yChange = yIncr;
+	KeyEvent e;
 	
+	//Three state for the Orc
+	private boolean jumping = false;
+	private boolean firing = false;
 	
+	 
 	public Model(int w, int h, int iw, int ih){
 		frameWidth = w;
 		frameHeight = h;
@@ -50,6 +57,14 @@ class Model{
 		return moving;
 	}
 	
+	public boolean getJumping() {
+		return jumping;
+	}
+	
+	public boolean getFiring() {
+		return firing;
+	}
+	
 	public void updateLocationAndDirection() {
 		if (moving) {
 			int frameXSize = frameWidth - imgWidth; //adjust for size of image
@@ -67,7 +82,40 @@ class Model{
 		}
     }
     
-
+	//if pressed J, start jumping and change firing state back to false (if the orc was firing)
+	public void jump() {
+		if(firing) {
+		firing = !firing;}
+		jumping = true;
+	}
+	
+	//if pressed F, start firing and change jump state back to false (if the orc was jumping)
+	public void fire() {
+		if(jumping) {
+		jumping = !jumping;}
+		firing = true;
+	}
+	
+	//if pressed R and the orc is firing or jumping, return to running state;
+	//change the boolean value for jumping and firing back to false
+	public void run() {
+		if(jumping) {
+		jumping = !jumping;}
+		if(firing) {
+			firing = !firing;}
+	}
+	
+	
+	//return the state of the orc
+	public String getState() {
+		if (this.jumping)
+			return "jumping";
+		else if (this.firing)
+			return "firing";
+		else
+			return "running";
+	}
+	
     public void startStop() {
 		this.moving = !this.moving;
 		/*if (buttonOn) {
