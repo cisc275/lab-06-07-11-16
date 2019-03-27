@@ -93,6 +93,7 @@ class View extends JPanel{
 	
 	//View.update(model.getX(), model.getY(), model.getDirect()); basically 
 	public void update(int x, int y, Direction direction, boolean mov, String state) {
+		this.requestFocus();
 		frame.setSize(windowSize);
 		xloc = x;
 		yloc = y;
