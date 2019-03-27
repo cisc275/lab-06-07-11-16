@@ -12,8 +12,11 @@ import java.awt.event.KeyEvent;
  **/
 
 
-class Model{
-
+class Model {
+	
+	final static int FIRE_LENGTH = 4;
+	final static int JUMP_LENGTH = 8;
+	
 	Direction d = Direction.SOUTHEAST;
 	
 	final int frameWidth;
@@ -31,8 +34,8 @@ class Model{
 	KeyEvent e;
 	
 	//Three state for the Orc
-	private boolean jumping = false;
-	private boolean firing = false;
+	private int jumping = 0;
+	private int firing = 0;
 	
 	 
 	public Model(int w, int h, int iw, int ih){
@@ -57,16 +60,26 @@ class Model{
 		return moving;
 	}
 	
-	public boolean getJumping() {
-		return jumping;
+	public boolean isJumping() {
+		return jumping > 0;
 	}
 	
-	public boolean getFiring() {
-		return firing;
+	public boolean isFiring() {
+		return firing > 0;
 	}
 	
 	public void updateLocationAndDirection() {
-		if (moving) {
+		if (isJumping()) {
+			jumping ++;
+			if (jumping > JUMP_LENGTH)
+				jumping = 0;
+		}
+		if (isFiring()) {
+			firing ++;
+			if (firing > FIRE_LENGTH)
+				firing = 0;
+		}
+		if (moving && !isFiring()) {
 			int frameXSize = frameWidth - imgWidth; //adjust for size of image
 			int frameYSize = frameHeight - imgHeight;
 			if (xloc < 0)
@@ -84,33 +97,28 @@ class Model{
     
 	//if pressed J, start jumping and change firing state back to false (if the orc was firing)
 	public void jump() {
-		if(firing) {
-		firing = !firing;}
-		jumping = true;
+		if (!isJumping() && !isFiring())
+			jumping = 1;
 	}
 	
 	//if pressed F, start firing and change jump state back to false (if the orc was jumping)
 	public void fire() {
-		if(jumping) {
-		jumping = !jumping;}
-		firing = true;
+		if (!isJumping() && !isFiring())
+			firing = 1;
 	}
 	
 	//if pressed R and the orc is firing or jumping, return to running state;
 	//change the boolean value for jumping and firing back to false
 	public void run() {
-		if(jumping) {
-		jumping = !jumping;}
-		if(firing) {
-			firing = !firing;}
+		
 	}
 	
 	
 	//return the state of the orc
 	public String getState() {
-		if (this.jumping)
+		if (isJumping())
 			return "jump";
-		else if (this.firing)
+		else if (isFiring())
 			return "fire";
 		else
 			return "forward";

@@ -48,20 +48,19 @@ class View extends JPanel{
 	int frameCount = 10;
 	int picNum = 0;
 	
-
+	
 	HashMap<String, BufferedImage[][]> pics;
 	
+	public View() {
+		this.createFrame();
+		this.createImages();
+	}
 	//(view.getWidth(), view.getHeight()), view.getImageWidth(), view.getImageHeight());
 	public int getWidth(){return frameWidth;}
 	public int getHeight(){return frameHeight;}
 	public int getImageWidth(){return imgWidth;}
 	public int getImageHeight(){return imgHeight;}
 	
-	
-	public View() {
-		this.createFrame();
-		this.createImages();
-	}
 	
 	void addControllerToButton(Controller c){
 		b1.addActionListener(c);
@@ -99,6 +98,8 @@ class View extends JPanel{
 		yloc = y;
 		d = direction;
 		moving = mov;
+		if (this.state != state)
+			picNum = -1;
 		this.state = state;
 		
 		frame.repaint();
@@ -126,27 +127,27 @@ class View extends JPanel{
 		//create pics hash map
 		pics = new HashMap<String, BufferedImage[][]>();
 		
-		String[] keyWord = new String[] {"forward","fire","jump"};
+		String[] keyWords = new String[] {"forward","fire","jump"};
 		
-		for(String S:keyWord) {
-		//add value to the pics hash map for the running state
-		BufferedImage[][] img = new BufferedImage[8][10];
-		pics.put(S, img);
-		for (int h = 0; h < 8; h++) {
-			Direction dirk = Direction.atIndex(h);
-			BufferedImage imgS = createImage("images/orc/orc_"+S+"_"+dirk.getName()+".png");
-			if(S == "forward") {
-				frameCount = 10;
+		for (String S:keyWords) {
+			//add value to the pics hash map for the running state
+			BufferedImage[][] img = new BufferedImage[8][10];
+			pics.put(S, img);
+			for (int h = 0; h < 8; h++) {
+				Direction dirk = Direction.atIndex(h);
+				BufferedImage imgS = createImage("images/orc/orc_"+S+"_"+dirk.getName()+".png");
+				if(S == "forward") {
+					frameCount = 10;
+				}
+				else if(S == "fire") {
+					frameCount = 4 ;
+				}
+				else {
+					frameCount = 8;
+				}
+				for(int i = 0; i <  frameCount; i++)
+					img[h][i] = imgS.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
 			}
-			else if(S == "fire") {
-				frameCount = 4 ;
-			}
-			else {
-				frameCount = 8;
-			}
-			for(int i = 0; i <  frameCount; i++)
-				img[h][i] = imgS.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
-		}
 		}
 //		//add value to the pics hash map for the firing state
 //		BufferedImage[][] fire = new BufferedImage[8][4];
@@ -173,18 +174,9 @@ class View extends JPanel{
 	
 	public void paint(Graphics g) {
 		if (moving) {
-			if(state == "forward") { //change the frame count for running, due to the frame cound differences between state
-				frameCount = 10;
-			}
-			if(state == "fire") {
-				frameCount = 4;
-			}
-			if(state == "jump") {
-				frameCount = 8;
-			}
-			picNum = (picNum + 1) % frameCount;
+			picNum = picNum + 1;
 		}
+		picNum = Math.max(picNum % pics.get(state)[d.getIndex()].length, 0);
 		g.drawImage(pics.get(state)[d.getIndex()][picNum], xloc, yloc, this); //draw image
-		
 	}
 }
